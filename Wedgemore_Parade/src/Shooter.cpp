@@ -139,10 +139,14 @@ Shooter::~Shooter()
 
 void Shooter::Shoot(bool val)
 {
-	m_kicker.Set(val);
+	if (!m_shooting && val){
+
+
+	m_kicker.Set(true);
 	m_shootTimer.Reset();
 	m_shootTimer.Start();
-
+	m_shooting = true;
+	}
 
 
 }
@@ -195,7 +199,7 @@ void Shooter::LiftTo(float angle) {
 				  SmartDashboard::GetNumber("Shooter D", 0));
 }
 
-void Shooter::Update() {
+void Shooter::Update(float lift) {
 	static Timer timer;
 	static unsigned count = 0;
 	float shootTime = m_shootTimer.Get();
@@ -231,18 +235,19 @@ void Shooter::Update() {
 		if(dt > 0.050) {
 			dt = 0.050;
 		}
-		velocity = Velocity(dt, error, velocity, m_liftAccel, m_liftMaxSpeed);
-
+		//velocity = Velocity(dt, error, velocity, m_liftAccel, m_liftMaxSpeed);
+		velocity = lift *0.1 ;
 		//SmartDashboard::PutNumber("incr position", incr_position);
 
 		incr_position = incr_position + velocity*dt;
-
+		printf("LIFTSPEED: %f\n", lift);
+		printf("INCR_POSITIon: %f\n", incr_position);
+		printf("Velocity: %f\n", velocity);
 		timer.Reset();
 		timer.Start();
 	}
 	else if(m_liftZero == 1) {
 		if(m_lift.IsRevLimitSwitchClosed() || loopCount > 100) {
-			m_lift.SetPosition(0);
 			incr_position = 0;
 			m_liftZero = 0;
 			velocity = 0;
@@ -259,6 +264,7 @@ void Shooter::Update() {
 	if (shootTime >= 1) {
 		m_kicker.Set(false);
 		m_shootTimer.Stop();
+		m_shooting = false;
 	}
 	m_lift.Set(incr_position);
 

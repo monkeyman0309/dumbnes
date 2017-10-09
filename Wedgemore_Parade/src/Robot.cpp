@@ -92,7 +92,7 @@ public:
 	void AutonomousPeriodic()
 	{
 		m_auto.Periodic();
-		m_shooter.Update();
+		m_shooter.Update(wui.LiftSpeed);
 	}
 
 	void TeleopInit()
@@ -216,8 +216,8 @@ public:
 				m_shooter.LiftTo(37 + AngleAdjust*20); //TODO use preferences for values.
 				break;
 		}
-
-		m_shooter.Update();
+		printf("Axis: %f\n", wui.LiftSpeed);
+		m_shooter.Update(wui.LiftSpeed);
 
 		m_suspension.SetFrontLeft(wui.DropFL);
 		m_suspension.SetBackLeft(wui.DropBL);

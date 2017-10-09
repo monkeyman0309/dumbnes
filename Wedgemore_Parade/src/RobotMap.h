@@ -14,7 +14,7 @@ enum ManStickMap {
 	PICKUP = 4,
 	PICKUPPOS = 9,
 	STARTPOS = 10,
-	LIFTAXIS = 5,
+	LIFTAXIS = 1,
 	SLIDERAXIS = 3,
 	YAWAXIS = 2,
 	SPINUP = 2,

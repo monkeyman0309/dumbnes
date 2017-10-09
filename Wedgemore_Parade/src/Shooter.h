@@ -11,6 +11,7 @@
 #include <CANSpeedController.h>
 #include <CANTalon.h>
 #include "TrapezoidalMove.h"
+#include "UserInterface.h"
 #define SHOOTER_SCALE (1.0/360.0)
 class Shooter
 {
@@ -26,8 +27,10 @@ private:
 	float m_currentPosition = 0;
 	float m_targetPosition = 0;
 	float m_targetWheelSpeed = 0;
+	bool m_shooting = false;
 	unsigned m_liftZero = 0;
 	TrapezoidalMove m_liftMove;
+	WedgemoreUserInput wui;
 public:
 	Shooter();
 	virtual ~Shooter();
@@ -46,7 +49,7 @@ public:
 	/**
 	 * Call every loop to update async actions.
 	 */
-	void Update();
+	void Update(float lift);
 	void Zero();
 	double GetLiftPosition();
 	double GetLiftAngle();
