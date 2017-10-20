@@ -10,7 +10,7 @@
 //The Robot's name is "Wedgemore"
 
 UserInterface::UserInterface() :
-		m_lStick(0), m_rStick(1), m_manStick(2)
+		m_controller(0)
 {
 }
 
@@ -21,6 +21,8 @@ UserInterface::~UserInterface()
 void UserInterface::Init(WedgemoreUserInput *wui) {
 	wui->DropFR = false, wui->DropFL = false, wui->DropBR = false, wui->DropBL = false;
 	wui->LeftSpeed = 0.0, wui->RightSpeed = 0.0;
+	wui->RightTrigger = 0;
+	wui->LeftTrigger = 0;
 	wui->LiftSpeed = 0;
 	wui->SliderValue = 0;
 	wui->Shoot = false, wui->Pickup = false;
@@ -32,6 +34,7 @@ void UserInterface::Init(WedgemoreUserInput *wui) {
 	wui->Zero = false;
 	wui->Custom = false;
 	wui->ShooterDown = false;
+	wui->ShooterUp = false;
 	wui->BatterHiGoal = false;
 	wui->DefenseHiGoal = false;
 	wui->LimitShoot = false;
@@ -39,76 +42,41 @@ void UserInterface::Init(WedgemoreUserInput *wui) {
 	wui->VBusMode = false;
 	wui->MidHiGoal = false;
 	wui->RunGunLight = false;
+	wui->eStop1 = false;
+	wui->eStop2 = false;
 }
 
-void UserInterface::GetManStickValues(WedgemoreUserInput *wui){
-	wui->LiftSpeed = m_manStick.GetRawAxis(LIFTAXIS);
-	wui->SliderValue = m_manStick.GetRawAxis(SLIDERAXIS);
+void UserInterface::GetControllerValues(WedgemoreUserInput *wui){
+	wui->LeftSpeed = m_controller.GetRawAxis(LEFT_JOYSTICK);
+	wui->RightSpeed = m_controller.GetRawAxis(RIGHT_JOYSTICK);
+	wui->LeftTrigger = m_controller.GetRawAxis(SHOOTER_DOWN);
+	wui->RightTrigger = m_controller.GetRawAxis(SHOOT);
 	wui->YawValue = 0;
 
-	wui->PickupPos = m_manStick.GetRawButton(PICKUPPOS);
-	wui->StartPosition = m_manStick.GetRawButton(STARTPOS);
-	wui->Shoot = m_manStick.GetRawButton(SHOOT);
-	wui->SpinUp = m_manStick.GetRawButton(SPINUP);
-	wui->SpinUpLow = m_manStick.GetRawButton(SLOWSPIN);
-	wui->Pickup = m_manStick.GetRawButton(PICKUP);
-	wui->Zero = m_manStick.GetRawButton(ZERO);
-	wui->Custom = m_manStick.GetRawButton(CUSTOMSHOT);
-	wui->BatterHiGoal = m_manStick.GetRawButton(BATTERHIGOALPOS);
-	wui->DefenseHiGoal = m_manStick.GetRawButton(DEFENSEHIGOALPOS);
-	wui->MidHiGoal = m_manStick.GetRawButton(MIDSHOTPOS);
-	wui->LimitShoot = m_manStick.GetRawButton(LIMIT_SHOOT);
-}
-void UserInterface::GetLStickValues(WedgemoreUserInput *wui) {
-	if(m_lStick.GetRawButton(DROPBACK))
-	{
-		wui->DropBR = true;
-		wui->DropBL = true;
-	}
-	if(m_lStick.GetRawButton(DROPFRONT))
-	{
-		wui->DropFL = true;
-		wui->DropFR = true;
-	}
-	if(m_lStick.GetRawButton(DROPLEFT))
-	{
-		wui->DropFL = true;
-		wui->DropBL = true;
-	}
-	if(m_lStick.GetRawButton(DROPRIGHT))
-	{
-		wui->DropFR = true;
-		wui->DropBR = true;
-	}
-	if(m_lStick.GetRawButton(DROPALL))
-	{
-		wui->DropFR = true;
-		wui->DropBR = true;
-		wui->DropFL = true;
-		wui->DropBL = true;
-	}
-}
-void UserInterface::GetRStickValues(WedgemoreUserInput *wui){
-	static bool lastLightButton = false;
-	wui->RunGunLight = m_rStick.GetRawButton(TOGGLE_RUN_LIGHT) && !lastLightButton ? true : false;
-	lastLightButton = m_rStick.GetRawButton(TOGGLE_RUN_LIGHT);
+	wui->ShooterUp = m_controller.GetRawButton(SHOOTER_UP);
 
-	wui->RunGunLight = m_rStick.GetRawButton(TOGGLE_RUN_LIGHT);
+	if (wui->LeftTrigger>=0.5){
+		wui->ShooterDown = true;
+	}
+	else {
+		wui->ShooterDown = false;
+	}
+	if (wui->RightTrigger>=0.5){
+		wui->Shoot = true;
+	}
+	else {
+			wui->Shoot = false;
+	}
 
-	wui->ShooterDown = m_rStick.GetRawButton(SHOOTER_DOWN);
-	wui->ReverseDrive = m_rStick.GetRawButton(REVERSE_DRIVE);
-	wui->SpeedMode = m_rStick.GetRawButton(SET_SPEED_MODE);
-	wui->VBusMode = m_rStick.GetRawButton(SET_VBUS_MODE);
-	wui->Climber = m_rStick.GetRawButton(CLIMBER);
+	wui->SpinUp = m_controller.GetRawButton(SPINUP);
+	wui->eStop1 = m_controller.GetRawButton(ESTOP1);
+	wui->eStop2 = m_controller.GetRawButton(ESTOP2);
 }
+
 
 void UserInterface::GetData(WedgemoreUserInput *wui)
 {
 	wui->DropFR = false, wui->DropFL = false, wui->DropBR = false, wui->DropBL = false;
-	GetLStickValues(wui);
-	GetRStickValues(wui);
-	GetManStickValues(wui);
+	GetControllerValues(wui);
 
-	wui->LeftSpeed = m_lStick.GetY();
-	wui->RightSpeed = m_rStick.GetY();
 }

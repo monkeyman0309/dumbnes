@@ -25,6 +25,7 @@ struct WedgemoreUserInput
 	bool Zero = false;
 	bool Custom = false;
 	bool ShooterDown = false;
+	bool ShooterUp = false;
 	bool BatterHiGoal = false;
 	bool DefenseHiGoal = false;
 	bool MidHiGoal = false;
@@ -34,15 +35,15 @@ struct WedgemoreUserInput
 	bool RunGunLight = false;
 	bool ReverseDrive = false;
 	bool Climber = false;
+	bool eStop1 = false, eStop2 = false;
+	float RightTrigger = 0, LeftTrigger = 0;
 };
 
 class UserInterface
 {
 private:
-	Joystick m_lStick, m_rStick, m_manStick;
-	void GetManStickValues(WedgemoreUserInput *wui);
-	void GetLStickValues(WedgemoreUserInput *wui);
-	void GetRStickValues(WedgemoreUserInput *wui);
+	Joystick m_controller;
+	void GetControllerValues(WedgemoreUserInput *wui);
 public:
 	UserInterface();
 	virtual ~UserInterface();

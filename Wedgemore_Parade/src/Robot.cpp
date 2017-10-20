@@ -32,12 +32,14 @@ private:
 	ADXRS450_Gyro m_rateSensor;
 	ShooterMode m_shooterMode = STOW_MODE;
 	VictorSP m_climber;
+	bool myDisableFlag = false;
 public:
 	Wedgemore() :
 		m_auto(&m_tank, &m_suspension, &m_shooter),
 		m_climber(0)
 //		m_auto(&m_tank, &m_suspension, &m_shooter, &m_rateSensor, &m_goalVision),
 //		m_climber(0)
+
 	{
 	}
 
@@ -121,7 +123,7 @@ public:
 //			cout << "length of seg " << i <<": " << lineSegs[i].length << endl;
 //		}
 		ui.GetData(&wui);
-
+		float liftSpeed = 0;
 		float leftSpeed = wui.RightSpeed *-1;
 		float rightSpeed = wui.LeftSpeed *-1;
 		if(wui.RunGunLight) {
@@ -217,12 +219,27 @@ public:
 				break;
 		}
 		printf("Axis: %f\n", wui.LiftSpeed);
-		m_shooter.Update(wui.LiftSpeed);
+		if (wui.ShooterUp){
+			liftSpeed=0.5;
+		}
+		else if (wui.ShooterDown){
+					liftSpeed=-0.5;
+		}
+		else {
+			liftSpeed = 0;
+		}
+		m_shooter.Update(liftSpeed);
 
 		m_suspension.SetFrontLeft(wui.DropFL);
 		m_suspension.SetBackLeft(wui.DropBL);
 		m_suspension.SetFrontRight(wui.DropFR);
 		m_suspension.SetBackRight(wui.DropBR);
+	if (wui.eStop1 && wui.eStop2){
+		myDisableFlag = true;
+	}
+}
+	bool IsDisabled() {
+		return ((RobotBase*)this)->IsDisabled() || myDisableFlag;
 	}
 
 	void TestPeriodic()
